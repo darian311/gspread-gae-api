@@ -3,20 +3,14 @@ import sys
 sys.path.append('lib/requests')
 sys.path.append('lib/gspread')
 
-import patch_httplib
-import gspread
-secrets = eval(open('secret.json').read())
-
 import requests
+import config_manager
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
-        gc = gspread.login(secrets['mail'], secrets['pass'])
-        wks = gc.open('Foo').sheet1
-        cell_list = wks.range('A1:B7')
-
         self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write(repr(cell_list))
+        self.response.write(repr(
+            config_manager.get_config('OPERATIONAL Job Fetch Bots')))
 
 app = webapp2.WSGIApplication([
     ('/', MainPage),
