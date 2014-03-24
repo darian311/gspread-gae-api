@@ -1,9 +1,9 @@
-[submodule "lib/requests"]
-	path = lib/requests
-	url = git://github.com/kennethreitz/requests.git
 [submodule "lib/urllib3"]
 	path = lib/urllib3
 	url = https://github.com/shazow/urllib3
+[submodule "lib/requests"]
+	path = lib/requests
+	url = git://github.com/kennethreitz/requests.git
 [submodule "lib/gspread"]
 	path = lib/gspread
 	url = https://github.com/burnash/gspread
