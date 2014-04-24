@@ -2,6 +2,7 @@ import patch_httplib
 import gspread
 import json
 import logging
+import os
 
 from google.appengine.api.app_identity import get_application_id
 from google.appengine.api import memcache
@@ -35,4 +36,7 @@ def get_config(name):
 
     return json.loads(conf)
 
-secrets = eval(open('secret.json').read())
+dir = os.path.dirname(__file__)
+secret_path = dir + '/../secret.json'
+
+secrets = eval(open(secret_path).read())
