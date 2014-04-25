@@ -37,6 +37,6 @@ def get_config(name):
     return json.loads(conf)
 
 dir = os.path.dirname(__file__)
-secret_path = dir + '/../secret.json'
+secret_path = 'secret.json'
 
 secrets = eval(open(secret_path).read())
