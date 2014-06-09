@@ -9,7 +9,7 @@ from google.appengine.api import memcache
 
 appname = get_application_id()
 session = None
-CACHE_TIME = 20
+CACHE_TIME = 3600 * 10
 
 def read_sheet(name=None, key=None):
     global session
@@ -30,10 +30,10 @@ def read_sheet(name=None, key=None):
             return config
     raise ValueError('no config for %s' % appname)
 
-def get_config(name=None, key=None):
+def get_config(name=None, key=None, can_cache=True):
     mcache_key = 'config-%s-%s' % (name, key)
     conf = memcache.get(mcache_key)
-    if not conf:
+    if not (conf and can_cache):
         conf = read_sheet(name=name, key=key)
         conf = json.dumps(conf)
         memcache.set(mcache_key, conf, CACHE_TIME)
