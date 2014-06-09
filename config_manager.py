@@ -11,7 +11,7 @@ appname = get_application_id()
 session = None
 CACHE_TIME = 3600 * 10
 
-def read_sheet(name=None, key=None):
+def read_sheet_raw(name=None, key=None):
     global session
     if not session:
         session = gspread.login(secrets['mail'], secrets['pass'])
@@ -21,24 +21,28 @@ def read_sheet(name=None, key=None):
     else:
         sheet = session.open_by_key(key).sheet1
     cell_values = sheet.get_all_values()
-    headers = cell_values[0]
-    items = cell_values[2:]
-    configs = [ dict(zip(headers, item)) for item in items ]
-    logging.info('configs %s', configs)
-    for config in configs:
-        if config['appid'] == appname:
-            return config
-    raise ValueError('no config for %s' % appname)
+    return cell_values
 
-def get_config(name=None, key=None, can_cache=True):
-    mcache_key = 'config-%s-%s' % (name, key)
+def read_sheet(name, can_cache=True):
+    mcache_key = 'sheet-%s' % name
     conf = memcache.get(mcache_key)
     if not (conf and can_cache):
-        conf = read_sheet(name=name, key=key)
+        conf = read_sheet_raw(name)
         conf = json.dumps(conf)
         memcache.set(mcache_key, conf, CACHE_TIME)
 
     return json.loads(conf)
+
+def get_config(name, can_cache=True):
+    cell_values = read_sheet(name, can_cache=can_cache)
+    headers = cell_values[0]
+    items = cell_values[2:]
+    configs = [ dict(zip(headers, item)) for item in items ]
+
+    for config in configs:
+        if config['appid'] == appname:
+            return config
+    raise ValueError('no config for %s' % appname)
 
 dir = os.path.dirname(__file__)
 secret_path = 'secret.json'
